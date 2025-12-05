@@ -1,30 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
 import { v4 as uuid4 } from 'uuid';
-import axios from "axios";
+import useAxios from "../hooks/useAxios";
 import PlayingCard from "./PlayingCard";
 
 const PlayingCardList = () => {
-    const [cards, setCards] = useState([]);
-    const addCard = async () => {
-        const response = await axios.get(
-            "https://deckofcardsapi.com/api/deck/new/draw/"
-        );
-        setCards(cards => [...cards, { ...response.data, id: uuid4() }]);
+    const [cards, addCard] = useAxios("https://deckofcardsapi.com/api/deck/new/draw/");
+
+    const handleAddCard = async () => {
+        await addCard();
     };
+
     return (
         <div className="PlayingCardList">
             <h3>Pick a card, any card!</h3>
             <div>
-                <button onClick={addCard}>Add a playing card!</button>
+                <button onClick={handleAddCard}>Add a playing card!</button>
             </div>
             <div className="PlayingCardList-card-area">
                 {cards.map(cardData => (
-                    <PlayingCard key={cardData.id} front={cardData.cards[0].image} />
+                    <PlayingCard key={uuid4()} front={cardData.cards[0].image} />
                 ))}
             </div>
         </div>
     );
-
-}
+};
 
 export default PlayingCardList;
